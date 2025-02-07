@@ -35,6 +35,8 @@ class OfflineUsers(models.Model):
     last_updated = models.DateTimeField(default=now)  # Track last update date
     device_id = models.CharField(max_length=255, blank=True, null=True)  # Store unique device ID
     old_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    last_added_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    new_user = models.BooleanField(default=True)
 
     def __str__(self):
         return self.owner.username
