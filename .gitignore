@@ -1,0 +1,19 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/build/
+/dist/
+/maya-computer/build/
+/maya-computer/dist/
+/staticfilesf
+/venv
+/db.sqlite3
+/simulate.py
+/network.py
+/core/tests.py
+/staticfiles/
