@@ -10,7 +10,6 @@
 /dist/
 /maya-computer/build/
 /maya-computer/dist/
-/staticfilesf
 /venv
 /db.sqlite3
 /simulate.py
