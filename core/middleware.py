@@ -6,6 +6,7 @@ import uuid
 
 from core.models import BlockedDevice, BlockedIP
 
+
 # logger = logging.get# logger(__name__)
 
 class DeviceInfoMiddleware(MiddlewareMixin):

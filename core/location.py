@@ -38,3 +38,4 @@ def save_location(request):
             return JsonResponse({"success": False, "message": "Invalid JSON format"}, status=400)
 
     return JsonResponse({"success": False, "message": "Invalid request method"}, status=405)
+

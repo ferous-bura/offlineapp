@@ -40,3 +40,4 @@ class OfflineUsers(models.Model):
 
     def __str__(self):
         return self.owner.username
+
