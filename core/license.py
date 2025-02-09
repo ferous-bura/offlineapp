@@ -1,7 +1,9 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth.models import User
 from .models import License
+
 
 @csrf_exempt
 def request_license(request):
@@ -14,8 +16,13 @@ def request_license(request):
         if not username or not machine_id:
             return JsonResponse({"error": "Username and machine ID are required"}, status=400)
 
+        try:
+            user = User.objects.get(username=username)  # Ensure user exists
+        except User.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
+
         # Check if the machine ID is already registered
-        license_obj, created = License.objects.get_or_create(machine_id=machine_id, owner__username=username)
+        license_obj, created = License.objects.get_or_create(machine_id=machine_id, owner=user)
 
         return JsonResponse({"license_key": license_obj.license_key})
 
