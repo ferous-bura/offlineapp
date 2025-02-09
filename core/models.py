@@ -57,20 +57,27 @@ class License(models.Model):
     machine_id = models.CharField(max_length=50, unique=True)
     license_key = models.CharField(max_length=16, unique=True)
 
+
     def generate_unique_key(self):
         """Generate a unique 16-character license key."""
-        while True:
-            raw_key = f"{self.owner.username}-{uuid.uuid4()}" if self.owner else str(uuid.uuid4())
+        raw_key = f"{self.owner.username}-{uuid.uuid4()}"
+        hashed_key = hashlib.sha256(raw_key.encode()).hexdigest()[:16].upper()
+
+        # Ensure the key is unique in the database
+        while License.objects.filter(license_key=hashed_key).exists():
+            raw_key = f"{self.owner.username}-{uuid.uuid4()}"
             hashed_key = hashlib.sha256(raw_key.encode()).hexdigest()[:16].upper()
 
-            # Ensure the key is unique in the database
-            if not License.objects.filter(license_key=hashed_key).exists():
-                return hashed_key
+        return hashed_key
 
     def save(self, *args, **kwargs):
+        if not self.owner:
+            raise ValueError("A License must have an associated owner (User).")
+        
         if not self.license_key:
             self.license_key = self.generate_unique_key()
+        
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.owner.username} - {self.license_key}" if self.owner else f"Unassigned - {self.license_key}"
+        return f"{self.owner.username} - {self.license_key}"
