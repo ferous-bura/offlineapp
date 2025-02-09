@@ -15,12 +15,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.views.generic.base import RedirectView
 
+def redirect_to_admin(request):
+    return redirect("/admin/")  # Temporary redirect (HTTP 302)
 
 urlpatterns = [
+    # path("", RedirectView.as_view(url="/admin/", permanent=True)),  # Redirect to /admin
+    path("", redirect_to_admin, name="main"),  # Redirect root to /admin
     path('offline/', include('core.urls')),
     path('admin/', admin.site.urls),
 ]
