@@ -1,10 +1,9 @@
 import json
 import requests
-from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from .models import UserLocation, User  # Create this model to store user locations
+from .models import UserLocation  # Create this model to store user locations
 
 @csrf_exempt
 @login_required(login_url='/login')

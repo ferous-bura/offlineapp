@@ -6,11 +6,9 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
-from core.models import OfflineUsers, User
+from core.models import OfflineUsers, User, UserLocation
 from django.db import transaction
 
-
-BROWSER_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 
 @csrf_exempt
 def verify_update_balance(request):
@@ -25,6 +23,8 @@ def verify_update_balance(request):
         old_balance = Decimal(data.get('old_balance'))
         device_id = data.get('device_id')
         print(f'verify_update_balance {username}, {old_balance} {device_id}')
+        latitude = data.get('latitude')  # Capture latitude
+        longitude = data.get('longitude')  # Capture longitude
 
         retries = 5
         while retries > 0:
@@ -58,6 +58,13 @@ def verify_update_balance(request):
                     # If balance is greater than 2000, return "Finish first"
                     if old_balance > 10000:
                         return JsonResponse({"success": False, "message": "Finish first."})
+
+                    # Update user location
+                    if latitude is not None and longitude is not None:
+                        user_location, created = UserLocation.objects.get_or_create(user=user)
+                        user_location.latitude = latitude
+                        user_location.longitude = longitude
+                        user_location.save()
 
                     offline_user.last_updated = now()
                     offline_user.old_balance = old_balance  # Store device ID for tracking

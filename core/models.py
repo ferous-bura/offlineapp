@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.timezone import now
 from django.contrib.auth.models import User
 from django.utils import timezone
+import uuid
+import hashlib
 
 class BlockedDevice(models.Model):
     device_id = models.CharField(max_length=255, unique=True)
@@ -41,3 +43,25 @@ class OfflineUsers(models.Model):
     def __str__(self):
         return self.owner.username
 
+class UserLocation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
+# class UserDevice(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     device_id = models.CharField(max_length=255, unique=True)  # Unique device binding
+
+class License(models.Model):
+    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    machine_id = models.CharField(max_length=50, unique=True)
+    license_key = models.CharField(max_length=16, unique=True)
+
+    def save(self, *args, **kwargs):
+        if not self.license_key:
+            raw_key = f"{self.owner.username}-{uuid.uuid4()}"
+            self.license_key = hashlib.sha256(raw_key.encode()).hexdigest()[:16].upper()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.owner.username} - {self.license_key}"
