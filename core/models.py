@@ -2,8 +2,6 @@ from django.db import models
 from django.utils.timezone import now
 from django.contrib.auth.models import User
 from django.utils import timezone
-import uuid
-import hashlib
 
 class BlockedDevice(models.Model):
     device_id = models.CharField(max_length=255, unique=True)
